@@ -76,13 +76,15 @@ class Carrinho
             throw new CarrinhoVazioNaoPossuiTotal();
         endif;
 
-        $amount = 0;
+        $total = new MoneyInCents(0);
 
         foreach($this->itens as $item):
-            $amount += $item->quantidade()->obter() * $item->produto()->getPreco()->get();
+            $total = $total->somar(
+                $item->produto()->getPreco()->multiplicarPor($item->quantidade()->obter())
+            );
         endforeach;
 
-        return new MoneyInCents($amount);
+        return $total;
     }
     
 }

@@ -2,7 +2,7 @@
 
 namespace Tavares\LojaOnline\Domain\Exception;
 
-final class EstoqueInsuficiente extends \InvalidArgumentException
+final class EstoqueInsuficiente extends DomainException
 {
     public function __construct()
     {

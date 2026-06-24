@@ -2,7 +2,7 @@
 
 namespace Tavares\LojaOnline\Domain\Exception;
 
-final class QuantidadeParaBaixaDeveSerSuperiorAZero extends \InvalidArgumentException
+final class QuantidadeParaBaixaDeveSerSuperiorAZero extends DomainException
 {
     public function __construct()
     {

@@ -2,7 +2,7 @@
 
 namespace Tavares\LojaOnline\Domain\Exception;
 
-final class CarrinhoNaoEncontrado extends \InvalidArgumentException
+final class CarrinhoNaoEncontrado extends DomainException
 {
     public function __construct()
     {

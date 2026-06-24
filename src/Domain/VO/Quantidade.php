@@ -2,7 +2,6 @@
 
 namespace Tavares\LojaOnline\Domain\VO;
 
-use Tavares\LojaOnline\Domain\Exception\EstoqueInsuficiente;
 use Tavares\LojaOnline\Domain\Exception\QuantidadeNaoPodeSerNegativa;
 use Tavares\LojaOnline\Domain\Exception\QuantidadeParaBaixaDeveSerSuperiorAZero;
 
@@ -15,17 +14,22 @@ final class Quantidade
         endif;
     }
 
-    public function darBaixa(Quantidade $item):self
+    public function subtrair(Quantidade $outra):self
     {
-        if ($item->quantidade <= 0):
+        if ($outra->quantidade <= 0):
             throw new QuantidadeParaBaixaDeveSerSuperiorAZero();
         endif;
 
-        if ($item->quantidade > $this->quantidade):
-            throw new EstoqueInsuficiente();
+        if ($outra->quantidade > $this->quantidade):
+            throw new QuantidadeNaoPodeSerNegativa();
         endif;
 
-        return new self($this->quantidade - $item->quantidade);
+        return new self($this->quantidade - $outra->quantidade);
+    }
+
+    public function ehMenorQue(Quantidade $outra):bool
+    {
+        return $this->quantidade < $outra->quantidade;
     }
 
     public function obter():int

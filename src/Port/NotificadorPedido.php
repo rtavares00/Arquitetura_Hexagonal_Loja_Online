@@ -8,5 +8,5 @@ use Tavares\LojaOnline\Domain\VO\Email;
 
 interface NotificadorPedido
 {
-    public function avisar(Email $cliente); // notificar o cliente
+    public function avisar(Email $cliente):void; // notificar o cliente
 }

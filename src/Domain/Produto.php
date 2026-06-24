@@ -5,15 +5,12 @@ declare(strict_types=1);
 namespace Tavares\LojaOnline\Domain;
 use Tavares\LojaOnline\Domain\VO\MoneyInCents;
 use Tavares\LojaOnline\Domain\VO\Quantidade;
-use Tavares\LojaOnline\Domain\Exception\EstoqueInicialNaoPodeSerZero;
+use Tavares\LojaOnline\Domain\Exception\EstoqueInsuficiente;
 
 class Produto
 {
     public function __construct(private int $sku,private string $nome,private MoneyInCents $preco,private Quantidade $quantidadeNoEstoque)
     {
-        if ($quantidadeNoEstoque->obter() <= 0):
-            throw new EstoqueInicialNaoPodeSerZero();
-        endif;
     }
 
     public function getNome():string
@@ -36,8 +33,18 @@ class Produto
         return $this->quantidadeNoEstoque;
     }
 
+    // consulta pura: não muta nada (usado na fase de validação do checkout)
+    public function temEstoquePara(Quantidade $quantidade):bool
+    {
+        return !$this->quantidadeNoEstoque->ehMenorQue($quantidade);
+    }
+
     public function darBaixa(Quantidade $quantidade):void
-    {        
-        $this->quantidadeNoEstoque = $this->quantidadeNoEstoque->darBaixa($quantidade);
+    {
+        if (!$this->temEstoquePara($quantidade)):
+            throw new EstoqueInsuficiente();
+        endif;
+
+        $this->quantidadeNoEstoque = $this->quantidadeNoEstoque->subtrair($quantidade);
     }
 }

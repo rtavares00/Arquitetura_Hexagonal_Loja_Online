@@ -5,6 +5,7 @@ namespace Tavares\LojaOnline\UseCase;
 use Tavares\LojaOnline\Domain\Pedido;
 use Tavares\LojaOnline\Domain\VO\Email;
 use Tavares\LojaOnline\Domain\Exception\CarrinhoVazioNaoPossuiTotal;
+use Tavares\LojaOnline\Domain\Exception\EstoqueInsuficiente;
 use Tavares\LojaOnline\Port\CarrinhoRepository;
 use Tavares\LojaOnline\Port\ProdutoRepository;
 use Tavares\LojaOnline\Port\PedidoRepository;
@@ -42,17 +43,25 @@ class FinalizarPedido{
             throw new CarrinhoVazioNaoPossuiTotal();
         endif;
 
-        // 3. pra cada item, dá baixa no estoque (valida internamente) e salva o produto
+        // 3. FASE 1 — checar TODOS os itens (não muta, não persiste).
+        //    Aborta antes de mexer em qualquer estoque se faltar um só.
+        foreach($carrinho->itens() as $item):
+            if(!$item->produto()->temEstoquePara($item->quantidade())):
+                throw new EstoqueInsuficiente();
+            endif;
+        endforeach;
+
+        // 4. FASE 2 — aplicar a baixa em todos (agora é seguro) e persistir
         foreach($carrinho->itens() as $item):
             $produto = $item->produto();
             $produto->darBaixa($item->quantidade());
             $this->produtoRepository->salvar($produto);
         endforeach;
 
-        // 4. calcula o total
+        // 5. calcula o total
         $total = $carrinho->calcularTotal();
 
-        // 5. cria o Pedido (repositório gera a identidade)
+        // 6. cria o Pedido (repositório gera a identidade)
         $pedido = new Pedido(
             $this->pedidoRepository->proximoId(),
             $carrinho->itens(),
@@ -60,10 +69,8 @@ class FinalizarPedido{
             $cliente
         );
 
-        // 6. salva o pedido
+        // 7. salva o pedido e notifica o cliente
         $this->pedidoRepository->salvar($pedido);
-
-        // 7. notifica o cliente
         $this->notificador->avisar($cliente);
     }
     

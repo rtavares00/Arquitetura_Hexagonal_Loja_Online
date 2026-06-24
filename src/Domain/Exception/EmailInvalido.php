@@ -2,7 +2,7 @@
 
 namespace Tavares\LojaOnline\Domain\Exception;
 
-final class EmailInvalido extends \InvalidArgumentException
+final class EmailInvalido extends DomainException
 {
     public function __construct()
     {

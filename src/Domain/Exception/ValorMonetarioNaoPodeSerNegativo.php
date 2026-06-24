@@ -2,7 +2,7 @@
 
 namespace Tavares\LojaOnline\Domain\Exception;
 
-final class ValorMonetarioNaoPodeSerNegativo extends \InvalidArgumentException
+final class ValorMonetarioNaoPodeSerNegativo extends DomainException
 {
     public function __construct()
     {
