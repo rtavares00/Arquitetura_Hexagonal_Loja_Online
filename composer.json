@@ -1,0 +1,14 @@
+{
+    "name": "tavares/loja_online",
+    "autoload": {
+        "psr-4": {
+            "Tavares\\LojaOnline\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "RODRIGO CESAR TAVARES FERREIRA"
+        }
+    ],
+    "require": {}
+}
